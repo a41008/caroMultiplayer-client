@@ -1,21 +1,24 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import socket from "../socket"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-
+import {GameContext, DispatchContext} from '../AppContext'
 const HostSelection = (props) => {
+    
+    const {nameSelected} = useContext(GameContext);
+    const dispatch = useContext(DispatchContext);
+
     const navigate = useNavigate();
     useEffect(() => {
-        if (!props.nameSelected) navigate('/');
+        if (!nameSelected) navigate('/');
     })
     const [roomID, setRoomID] = useState('');
     const onHost = () => {
         socket.emit('host room');
-        props.setHost(1);
+
     }
     const onJoin = (roomID) => {
         socket.emit('join room', roomID)
-        props.setHost(-1);
     }
     return <div className="host-selection">
         <button onClick={onHost}>Host</button>

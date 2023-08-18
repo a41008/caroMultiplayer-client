@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import './App.css';
 import socket from './socket';
-import HostSelection from './components/HostSelection';
 import NameSelection from './components/NameSelection';
-import Lobby from './components/Lobby'
 import {
   BrowserRouter,
   Routes,
@@ -11,47 +9,113 @@ import {
 } from 'react-router-dom';
 
 import events from './events'
+import Game from './components/Game';
+import {DispatchContext, GameContext} from './AppContext'
+
+
+
+const gameReducer = (state, action) => {
+  switch (action.type) {
+    case 'set_is_host' : {
+      return {...state, isHost: action.value}
+    }
+    case 'set_name_selected' : {
+      return {...state, nameSelected: action.value}
+    }
+    case 'set_player_joined' : {
+      return {...state, playerJoined: action.value}
+    }
+    case 'set_game_started' : {
+      return {...state, gameStarted: action.value, firstPlayer: action.id}
+    }
+    default:{
+      return state
+    }
+  }
+}
 
 
 function App() {
-  // const [currentPlayer, setPlayer] = useState('X')
-  const [isHost, setIsHost] = useState(0);
-  const [nameSelected, setNameSelected] = useState(false);
-  const [playerJoined, setPlayerJoined] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gameState, dispatch] = useReducer(gameReducer, {
+    isHost: 0,
+    nameSelected: false,
+    playerJoined: false,
+    gameStarted: false,
+    firstPlayer: null
+  })
 
   useEffect(() => {
     socket.on(events.player_joined, (playerName) => {
       console.log(`Player ${playerName} joined`)
-      setPlayerJoined(true)
+      dispatch({
+        type: 'set_player_joined',
+        value: true
+      })
     })
 
     socket.on(events.connect_error, ({roomID, err}) => {
       console.log(`Failed to connect to room ${roomID} : ${err}`);
-      setIsHost(() => 0)
-    })
 
+      dispatch({
+        type: 'set_is_host',
+        value: 0
+      })
+    })
+    socket.on(events.host_success, (roomID) => {
+      socket.joinedRoom = roomID;
+      dispatch({
+        type: 'set_is_host',
+        value: 1
+      })
+    })
     socket.on(events.room_connected, (hostName) => {
-      console.log(hostName)
+      socket.joinedRoom = hostName;
+      dispatch({
+        type: 'set_is_host',
+        value: -1
+      })
     })
 
     socket.on(events.host_disconnected, () => {
-      setIsHost(0);
+      dispatch({
+        type: 'set_is_host',
+        value: 0
+      })
+      dispatch({
+        type: 'set_game_started',
+        value: false
+      })
     })
     socket.on(events.player_disconnected, () => {
-      setPlayerJoined(false);
+      dispatch({
+        type: 'set_player_joined',
+        value: false
+      })
+      dispatch({
+        type: 'set_game_started',
+        value:false
+      })
     })
+    socket.on(events.start_game, (id) => {
+      dispatch({
+        type: 'set_game_started',
+        value: true,
+        id: id
+      })
+    })
+
   }, [])
-  return <BrowserRouter>
-    <Routes>
-      <Route path='/' element={<NameSelection setNameSelected={setNameSelected}/>}/>
-      <Route path='/game' element={(<div className="App">
-                                      {isHost === 0 ? <HostSelection setHost={setIsHost} nameSelected={nameSelected}/> 
-                                                    : <Lobby isHost={isHost} playerJoined={playerJoined} gameStarted={gameStarted} setGameStarted={setGameStarted}/>}
-                                    </div>
-                                  )}/>
-    </Routes>
-  </BrowserRouter>
+  return <GameContext.Provider value={gameState}>
+    <DispatchContext.Provider value={dispatch}>
+      <BrowserRouter>
+        <Routes>
+          <Route path='/' element={<NameSelection/>} />
+          <Route path='/game' element={<Game/>} />
+        </Routes>
+      </BrowserRouter>
+    </DispatchContext.Provider>
+  </GameContext.Provider>
+  
   
 }
 

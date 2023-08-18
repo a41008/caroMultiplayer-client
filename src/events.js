@@ -1,4 +1,4 @@
-export default {
+const events = {
     player_joined: 'player joined',
     connect_error: 'connect error',
     room_connected: 'room connected',
@@ -8,6 +8,8 @@ export default {
     name_accepted: 'name accepted',
     name_rejected: 'name_rejected',
     host_room: 'host room',
+    host_success: 'host success',
     join_room: 'join room',
-
+    start_game: 'start game'
 };
+export default events

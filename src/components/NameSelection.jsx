@@ -1,13 +1,18 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import socket from "../socket"
 import { useNavigate } from "react-router-dom"
 import events from '../events'
+import { DispatchContext} from '../AppContext'
 
-const NameSelection = (props) => {
+
+const NameSelection = () => {
 
     const navigate = useNavigate();
     const [name, setName] = useState('')
     const [rejected, setRejected] = useState(false);
+
+    const dispatch = useContext(DispatchContext);
+
     const onSubmit = () => {
         if (name)
             socket.emit(events.name_selection, name)
@@ -20,13 +25,16 @@ const NameSelection = (props) => {
     useEffect(() => {
         socket.on(events.name_accepted, (name) => {
             socket.playerName = name
-            props.setNameSelected(true)
+            dispatch({
+                type: 'set_name_selected',
+                value: true
+            })
             navigate('/game')
         })
         socket.on(events.name_rejected, (name) => {
             setRejected(true)
         })
-    },[props])
+    })
 
     return <div className="name-container">
         <div className="form">
