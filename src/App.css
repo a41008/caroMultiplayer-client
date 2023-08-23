@@ -1,10 +1,56 @@
-.App, #root {
+p {
+  margin: 0;
+}
+
+.App-container, .name-container {
+  height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+.name-selection, .App {
+  height: 80%;
+  width: 100%;
+  display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  overflow: scroll;
 }
+
+.lobby {
+  width: 50%;
+  margin: auto;
+}
+
+.btn-container {
+  position: relative;
+}
+
+.btn-start {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.player-list {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.avatar img {
+  height: 5em;
+  border-radius: 50%;
+}
+
+.avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 30px;
+}
+
 .board {
   width: fit-content;
   height: fit-content;
@@ -14,11 +60,11 @@
   padding: 10px;
   border: 2px solid black;
   border-radius: 5px;
-  margin: 20px;
+  margin: auto;
   
 }
 
-.board::-webkit-scrollbar {
+.board::-webkit-scrollbar, .App::-webkit-scrollbar {
   display: none;
 }
 
@@ -43,6 +89,17 @@
   border-radius: 4px;
 }
 
-p{
-  font-size: 10px;
+.header, .footer {
+  width: 100%;
+  background-color: #ccc;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50px;
 }
+.header div, .footer div {
+  vertical-align: baseline;
+}
+

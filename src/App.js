@@ -46,21 +46,12 @@ function App() {
 
   useEffect(() => {
     socket.on(events.player_joined, (playerName) => {
-      console.log(`Player ${playerName} joined`)
       dispatch({
         type: 'set_player_joined',
-        value: true
+        value: playerName
       })
     })
 
-    socket.on(events.connect_error, ({roomID, err}) => {
-      console.log(`Failed to connect to room ${roomID} : ${err}`);
-
-      dispatch({
-        type: 'set_is_host',
-        value: 0
-      })
-    })
     socket.on(events.host_success, (roomID) => {
       socket.joinedRoom = roomID;
       dispatch({
@@ -68,8 +59,9 @@ function App() {
         value: 1
       })
     })
-    socket.on(events.room_connected, (hostName) => {
-      socket.joinedRoom = hostName;
+    socket.on(events.room_connected, ({hostName, roomID}) => {
+      socket.hostName = hostName;
+      socket.joinedRoom = roomID;
       dispatch({
         type: 'set_is_host',
         value: -1
@@ -77,6 +69,8 @@ function App() {
     })
 
     socket.on(events.host_disconnected, () => {
+      socket.emit('leave room', socket.joinedRoom);
+      socket.joinedRoom = null
       dispatch({
         type: 'set_is_host',
         value: 0
@@ -103,18 +97,35 @@ function App() {
         id: id
       })
     })
-
+    socket.on('quitted looby', () => {
+      socket.joinedRoom = null;
+      socket.hostName = null;
+      dispatch({
+        type: 'set_player_joined',
+        value: false
+      })
+      dispatch({
+        type: 'set_is_host',
+        value: 0
+      })
+      dispatch({
+        type: 'set_game_started',
+        value: false
+      })
+    })
   }, [])
-  return <GameContext.Provider value={gameState}>
-    <DispatchContext.Provider value={dispatch}>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={<NameSelection/>} />
-          <Route path='/game' element={<Game/>} />
-        </Routes>
-      </BrowserRouter>
-    </DispatchContext.Provider>
-  </GameContext.Provider>
+  return(
+    <GameContext.Provider value={gameState}>
+      <DispatchContext.Provider value={dispatch}>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<NameSelection/>} />
+            <Route path='/game' element={<Game/>} />
+          </Routes>
+        </BrowserRouter>
+      </DispatchContext.Provider>
+    </GameContext.Provider>    
+  ) 
   
   
 }
