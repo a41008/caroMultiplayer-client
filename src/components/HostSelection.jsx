@@ -37,10 +37,12 @@ const HostSelection = () => {
         }
     })
     return <div className="host-selection">
-        <div className="form">
-            <button onClick={onHost}>Host</button>
-            <button onClick={() => onJoin(roomID)}>Join</button>
-            <input type="text" placeholder="Host string" value={roomID} onChange={(e) => setRoomID(() => e.target.value)}/>
+        <div className="host-selection__form">
+            <button onClick={onHost}>Tạo phòng</button>
+            <div className="form__join-room">
+                <button onClick={() => onJoin(roomID)}>Tham gia</button>
+                <input type="text" placeholder="Mã phòng" value={roomID} onChange={(e) => setRoomID(() => e.target.value)}/>
+            </div>
         </div>
         {isRejected ? <div className="error">Không thể tham gia phòng vì {error === 'full' ? 'phòng đã đầy' : 'phòng không tồn tại'}</div> : ''}
     </div>

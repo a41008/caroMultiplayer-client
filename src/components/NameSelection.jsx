@@ -39,15 +39,19 @@ const NameSelection = () => {
     return  <div className="name-container">
         <Header/>
         <div className="name-selection">
-            <div className="form">
+            <div className="name-selection__form">
                 <input autoFocus type="text" 
                         placeholder="Tên của bạn là gì?" 
                         value={name} 
-                        onChange={(e) => setName(() => e.target.value)}
-                        onKeyDown={onKeyDown}/>
-                <button onClick={onSubmit}>OK</button>
-                {rejected ? <p className="rejected">Tên {name} đã được sử dụng bởi người khác, vui lòng nhập lại tên khác</p>:''}
+                        onChange={(e) => {
+                            setName(() => e.target.value)
+                            setRejected(false);
+                        }}
+                        onKeyDown={onKeyDown}
+                        className="form__name"/>
+                <button className="form__submit-btn" onClick={onSubmit}>OK</button>
             </div>
+            {rejected ? <div className="error">Tên {name} đã được sử dụng bởi người khác, vui lòng chọn tên khác</div>:''}
         </div>
         <Footer/>
     </div>

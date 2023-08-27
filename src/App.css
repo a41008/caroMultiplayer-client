@@ -9,17 +9,94 @@ p {
 }
 
 .name-selection, .App {
+  position: relative;
   height: 80%;
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow: scroll;
 }
+.name-selection::-webkit-scrollbar,
+.App::-webkit-scrollbar, 
+.lobby::-webkit-scrollbar, 
+.board__inner::-webkit-scrollbar {
+  display: none;
+}
+
+.name-selection__form .form__name {
+  font-size: 16px;
+  border-radius: 3px;
+  padding: 4px 8px;
+}
+
+.name-selection__form .form__submit-btn {
+  font-size: 16px;
+  padding: 5px 10px;
+  background-color: #ccc;
+  color: #000;
+  border:none;
+  border-radius: 3px;
+}
+
+
+
+.host-selection__form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.form__join-room {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.form__join-room input {
+  font-size: 20px;
+  padding: 6px;
+}
+
+.host-selection__form button {
+  padding: 10px;
+  border: 0;
+  border-radius: 4px;
+  background-color: #ccc;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.error {
+  font-size: 10px;
+  color: red;
+  text-align: center;
+}
+
 
 .lobby {
   width: 50%;
   margin: auto;
+  flex: 1;
+  overflow: scroll;
+}
+
+.lobby>.btn-quit {
+  position: absolute;
+  top: 0;
+  width: fit-content;
+  border: 1px solid black;
+  padding-bottom: 5px;
+  padding-right: 5px;
+  cursor: pointer;
+  background-color: #dae0dce2;
+  margin: 10px;
+  border-radius: 4px;
+}
+.lobby .icon-back {
+  width: 15px;
+  margin-bottom: -2px;
 }
 
 .btn-container {
@@ -37,6 +114,9 @@ p {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+
+  margin-top: 50px;
+  margin-bottom: 30px;
 }
 
 .avatar img {
@@ -49,23 +129,39 @@ p {
   flex-direction: column;
   align-items: center;
   margin-right: 30px;
+  margin-bottom: 10px;
+  width: 80px;
+  height: 120px;
+  overflow: hidden;
+}
+
+.board-container {
+  height: 60%;
 }
 
 .board {
-  width: fit-content;
-  height: fit-content;
+  width: 100%;
+  height: 100%;
   max-width: 500px;
   max-height: 500px;
-  overflow: scroll;
   padding: 10px;
   border: 2px solid black;
   border-radius: 5px;
   margin: auto;
-  
+  box-sizing: border-box;
 }
 
-.board::-webkit-scrollbar, .App::-webkit-scrollbar {
-  display: none;
+.board__inner {
+  width: 100%;
+  height: 100%;
+  overflow: scroll;
+}
+.board-state {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .row {

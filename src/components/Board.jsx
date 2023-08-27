@@ -6,7 +6,10 @@ const Square = forwardRef( (props, ref) => {
     const btnRef = useRef(null);
     useImperativeHandle(ref, () => ({
         display: () => console.log(props.pos),
-        set: (lett) => !letter ? setLetter(lett) : null,
+        set: (lett) => {
+            if (!letter) setLetter(lett);
+            btnRef.current.scrollIntoView();
+        },
         setBGC: () => {
             btnRef.current.style.backgroundColor = 'red'
         },
@@ -73,16 +76,23 @@ export const Board = (props) => {
         }
     },[])
 
-    return <div className="board">
-        {Array(props.height).fill(0).map((val, idx) => {
-            return  <div className={'row'} key={idx}>
-                {Array(props.width).fill(0).map((val, idy) => {
-                    return <Square enabled={isMyTurn} handleClick={handleClick} ref={refs.current[idx][idy]} pos={{x: idx, y: idy}} key={idy}/>
-                })}
+    return <div className="board-container">
+        <div className="board">
+            <div className="board__inner">
+                {Array(props.height).fill(0).map((val, idx) => {
+                    return  <div className={'row'} key={idx}>
+                        {Array(props.width).fill(0).map((val, idy) => {
+                            return <Square enabled={isMyTurn} handleClick={handleClick} ref={refs.current[idx][idy]} pos={{x: idx, y: idy}} key={idy}/>
+                        })}
+                    </div>
+                })
+                }
             </div>
-        })
-        }
-        <div>{gameEnded ? 'Kết thúc' : isMyTurn ? 'Lượt của mình': 'Lượt của đối thủ'}</div>
-        <div><button disabled={isHost === -1 || !gameEnded} onClick={restart}>Ván mới</button></div>
+        </div>
+        <div className="board-state">
+            <div>{gameEnded ? 'Kết thúc' : isMyTurn ? 'Lượt của mình': 'Lượt của đối thủ'}</div>
+            <div><button disabled={isHost === -1 || !gameEnded} onClick={restart}>Ván mới</button></div>
+        </div>
+
     </div>
 }
